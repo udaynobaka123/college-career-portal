@@ -162,8 +162,8 @@ app.use((err, req, res, next) => {
 const port = process.env.PORT || 3000;
 
 if (require.main === module) {
-  app.listen(port, () => {
-    console.log(`Career Portal running at http://localhost:${port}`);
+  app.listen(port, "0.0.0.0", () => {
+    console.log(`Career Portal running on port ${port}`);
   });
 }
 
