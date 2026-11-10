@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # College CareerConnect Portal
 
 Node.js / Express / EJS / PostgreSQL starter application based on the MVC style of the supplied Student Grievance Management System (Express routes, controllers, middleware, database module, server-rendered EJS views).
@@ -30,3 +31,7 @@ Change the password immediately for real deployments.
 - Resume uploads are PDF-only and limited to 5 MB. Ensure `public/uploads/resumes` exists and is writable.
 - Do not deploy with the example session secret. Configure HTTPS and production database TLS.
 - The project includes core portal workflows; optional advanced features such as employer self-service, email-based password recovery, complete CRUD screens for all admin resources, CSRF integration, and automated reminder jobs require additional implementation/configuration before production use.
+=======
+# college-career-portal
+A College Career Portal built with Node.js, Express, EJS and PostgreSQL.
+>>>>>>> 38166e6bb15c58366cd4763a672ccc82a2299275
