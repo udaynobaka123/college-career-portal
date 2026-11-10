@@ -1,0 +1,132 @@
+
+<%- include('../partials/header') %>
+
+<div class="page-heading">
+    <span class="eyebrow">ADMINISTRATION</span>
+    <h1>Application Review</h1>
+    <p>Review student applications and update their progress.</p>
+</div>
+
+<div class="detail-panel table-responsive">
+
+    <table class="table align-middle">
+
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Opportunity</th>
+                <th>Company</th>
+                <th>Submitted</th>
+                <th>Review</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <% if (applications.length > 0) { %>
+
+                <% applications.forEach(a => { %>
+
+                    <tr>
+
+                        <!-- Student Information -->
+                        <td>
+                            <strong><%= a.student_name %></strong>
+                            <div class="small text-muted">
+                                <%= a.student_id || 'No student ID' %>
+                            </div>
+                        </td>
+
+                        <!-- Opportunity -->
+                        <td>
+                            <%= a.opportunity_title %>
+                        </td>
+
+                        <!-- Company -->
+                        <td>
+                            <%= a.company_name || 'Not specified' %>
+                        </td>
+
+                        <!-- Application Date -->
+                        <td>
+                            <%
+                                let submittedDate = 'Not available';
+
+                                if (a.applied_at) {
+                                    submittedDate = new Date(a.applied_at)
+                                        .toLocaleDateString('en-GB');
+                                }
+                            %>
+
+                            <%= submittedDate %>
+                        </td>
+
+                        <!-- Application Status -->
+                        <td>
+
+                            <form
+                                method="POST"
+                                action="/admin/applications/<%= a.id %>"
+                            >
+
+                                <select
+                                    name="status"
+                                    class="form-select form-select-sm mb-2"
+                                    required
+                                >
+
+                                    <%
+                                        const statuses = [
+                                            { value: 'pending', label: 'Pending' },
+                                            { value: 'reviewed', label: 'Reviewed' },
+                                            { value: 'shortlisted', label: 'Shortlisted' },
+                                            { value: 'accepted', label: 'Accepted' },
+                                            { value: 'rejected', label: 'Rejected' }
+                                        ];
+                                    %>
+
+                                    <% statuses.forEach(s => { %>
+
+                                        <option
+                                            value="<%= s.value %>"
+                                            <%= a.status === s.value ? 'selected' : '' %>
+                                        >
+                                            <%= s.label %>
+                                        </option>
+
+                                    <% }) %>
+
+                                </select>
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-sm btn-primary"
+                                >
+                                    Update Status
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                <% }) %>
+
+            <% } else { %>
+
+                <tr>
+                    <td colspan="5" class="text-center py-4">
+                        No applications have been submitted yet.
+                    </td>
+                </tr>
+
+            <% } %>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<%- include('../partials/footer') %>

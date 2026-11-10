@@ -1,0 +1,45 @@
+<%- include('../partials/header') %>
+
+<div class="page-heading">
+  <span class="eyebrow">APPLICATION</span>
+  <h1>Apply for <%= opportunity.title %></h1>
+  <p><%= opportunity.company_name %></p>
+</div>
+
+<form
+  method="post"
+  action="/student/apply"
+  enctype="multipart/form-data"
+  class="detail-panel"
+>
+  <input type="hidden" name="opportunity_id" value="<%= opportunity.id %>" />
+
+  <label class="form-label">Cover Letter</label>
+  <textarea
+    class="form-control mb-3"
+    name="cover_letter"
+    rows="7"
+    required
+    placeholder="Tell the organization why you're a good fit..."
+  ></textarea>
+
+  <label class="form-label">Resume (PDF, max 5 MB)</label>
+  <input
+    type="file"
+    name="resume"
+    accept="application/pdf"
+    class="form-control mb-4"
+    required
+  />
+
+  <button type="submit" class="btn btn-primary">Submit Application</button>
+
+  <a
+    href="/opportunities/<%= opportunity.id %>"
+    class="btn btn-outline-secondary ms-2"
+  >
+    Cancel
+  </a>
+</form>
+
+<%- include('../partials/footer') %>

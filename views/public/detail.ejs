@@ -1,0 +1,171 @@
+
+<%- include('../partials/header') %>
+
+<%
+    // Get the correct deadline from the database
+    const rawDeadline = opportunity.application_deadline;
+
+    let deadlineValue = null;
+
+    if (rawDeadline) {
+        if (rawDeadline instanceof Date) {
+            deadlineValue =
+                rawDeadline.getFullYear() + '-' +
+                String(rawDeadline.getMonth() + 1).padStart(2, '0') + '-' +
+                String(rawDeadline.getDate()).padStart(2, '0');
+        } else {
+            deadlineValue = String(rawDeadline).slice(0, 10);
+        }
+    }
+
+    // Get today's date in YYYY-MM-DD format
+    const now = new Date();
+
+    const today =
+        now.getFullYear() + '-' +
+        String(now.getMonth() + 1).padStart(2, '0') + '-' +
+        String(now.getDate()).padStart(2, '0');
+
+    // Check whether applications are still open
+    const deadlineOpen = !deadlineValue || deadlineValue >= today;
+
+    const canApply =
+        opportunity.status === 'approved' && deadlineOpen;
+
+    // Format the deadline for display
+    const formattedDeadline = deadlineValue
+        ? new Date(deadlineValue + 'T00:00:00').toLocaleDateString('en-GB')
+        : 'No deadline';
+
+    const formattedType = (opportunity.opportunity_type || 'Opportunity')
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, char => char.toUpperCase());
+%>
+
+<a href="/opportunities" class="text-decoration-none small">
+    <i class="fa fa-arrow-left me-2"></i>
+    Back to opportunities
+</a>
+
+<div class="row g-4 mt-2">
+
+    <!-- Opportunity Details -->
+    <div class="col-lg-8">
+
+        <article class="detail-panel">
+
+            <span class="type-pill">
+                <%= formattedType %>
+            </span>
+
+            <h1 class="mt-3">
+                <%= opportunity.title %>
+            </h1>
+
+            <h5 class="text-muted">
+                <%= opportunity.company_name || 'Company not specified' %>
+            </h5>
+
+            <div class="d-flex flex-wrap gap-3 my-4 text-muted">
+
+                <span>
+                    <i class="fa fa-location-dot me-2"></i>
+                    <%= opportunity.location || 'Location flexible' %>
+                </span>
+
+                <span>
+                    <i class="fa fa-calendar me-2"></i>
+                    Deadline: <%= formattedDeadline %>
+                </span>
+
+            </div>
+
+            <h5>About the opportunity</h5>
+
+            <p>
+                <%= opportunity.description %>
+            </p>
+
+            <% if (opportunity.requirements) { %>
+
+                <h5>Requirements</h5>
+
+                <p>
+                    <%= opportunity.requirements %>
+                </p>
+
+            <% } %>
+
+        </article>
+
+    </div>
+
+    <!-- Opportunity Overview -->
+    <div class="col-lg-4">
+
+        <div class="apply-panel">
+
+            <h4>Opportunity Overview</h4>
+
+            <p>
+                <strong>Company</strong><br>
+                <%= opportunity.company_name || 'Not specified' %>
+            </p>
+
+            <p>
+                <strong>Opportunity Type</strong><br>
+                <%= formattedType %>
+            </p>
+
+            <p>
+                <strong>Location</strong><br>
+                <%= opportunity.location || 'Not specified' %>
+            </p>
+
+            <p>
+                <strong>Compensation</strong><br>
+                <%= opportunity.salary || 'Not specified' %>
+            </p>
+
+            <p>
+                <strong>Deadline</strong><br>
+                <%= formattedDeadline %>
+            </p>
+
+            <hr>
+
+            <% if (!user) { %>
+
+                <a href="/auth/login"
+                   class="btn btn-primary w-100">
+                    Sign in to apply
+                </a>
+
+            <% } else if (user.role === 'student' && canApply) { %>
+
+                <a href="/student/apply/<%= opportunity.id %>"
+                   class="btn btn-primary w-100">
+                    Apply Now
+                </a>
+
+            <% } else if (user.role === 'student') { %>
+
+                <button class="btn btn-secondary w-100" disabled>
+                    Application Closed
+                </button>
+
+            <% } else { %>
+
+                <button class="btn btn-secondary w-100" disabled>
+                    Student Account Required
+                </button>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+</div>
+
+<%- include('../partials/footer') %>

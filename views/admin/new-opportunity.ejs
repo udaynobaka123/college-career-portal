@@ -1,0 +1,123 @@
+
+<%- include('../partials/header', {title: 'New Opportunity'}) %>
+
+<div class="container mt-4 mb-5">
+
+    <h1 class="fw-bold">Publish an Opportunity</h1>
+    <p class="text-muted">
+        Enter the details below to create a new career opportunity.
+    </p>
+
+    <form class="op-card mt-3"
+          method="POST"
+          action="/admin/opportunities">
+
+        <div class="row g-3">
+
+            <!-- Opportunity Title -->
+            <div class="col-md-8">
+                <label class="form-label">Opportunity Title</label>
+                <input
+                    type="text"
+                    name="title"
+                    class="form-control"
+                    placeholder="e.g. Web Development Intern"
+                    required
+                >
+            </div>
+
+            <!-- Opportunity Type -->
+            <div class="col-md-4">
+                <label class="form-label">Opportunity Type</label>
+                <select name="type" class="form-select" required>
+                    <option value="internship">Internship</option>
+                    <option value="job">Full-time Job</option>
+                    <option value="part-time">Part-time</option>
+                    <option value="graduate-trainee">Graduate Trainee</option>
+                    <option value="contract">Contract</option>
+                </select>
+            </div>
+
+            <!-- Company Name -->
+            <div class="col-md-6">
+                <label class="form-label">Company / Organization Name</label>
+                <input
+                    type="text"
+                    name="company_name"
+                    class="form-control"
+                    placeholder="Enter company name"
+                    required
+                >
+            </div>
+
+            <!-- Location -->
+            <div class="col-md-6">
+                <label class="form-label">Location</label>
+                <input
+                    type="text"
+                    name="location"
+                    class="form-control"
+                    placeholder="e.g. Thimphu, Bhutan"
+                >
+            </div>
+
+            <!-- Salary -->
+            <div class="col-md-6">
+                <label class="form-label">Salary / Stipend</label>
+                <input
+                    type="text"
+                    name="salary"
+                    class="form-control"
+                    placeholder="e.g. Nu. 15,000 per month"
+                >
+            </div>
+
+            <!-- Application Deadline -->
+            <div class="col-md-6">
+                <label class="form-label">Application Deadline</label>
+                <input
+                    type="date"
+                    name="application_deadline"
+                    class="form-control"
+                >
+            </div>
+
+            <!-- Description -->
+            <div class="col-12">
+                <label class="form-label">Description</label>
+                <textarea
+                    name="description"
+                    class="form-control"
+                    rows="6"
+                    placeholder="Describe the opportunity..."
+                    required
+                ></textarea>
+            </div>
+
+            <!-- Requirements -->
+            <div class="col-12">
+                <label class="form-label">Requirements</label>
+                <textarea
+                    name="requirements"
+                    class="form-control"
+                    rows="4"
+                    placeholder="Enter the qualifications and skills required..."
+                ></textarea>
+            </div>
+
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4">
+            Publish Opportunity
+        </button>
+
+        <a href="/admin/opportunities"
+           class="btn btn-outline-secondary mt-4 ms-2">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+<%- include('../partials/footer') %>

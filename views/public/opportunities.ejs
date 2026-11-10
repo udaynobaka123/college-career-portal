@@ -1,0 +1,80 @@
+
+<%- include('../partials/header') %>
+
+<div class="page-heading">
+    <span class="eyebrow">CAREER BOARD</span>
+    <h1>Explore Opportunities</h1>
+    <p>Find the role that fits your skills and ambitions.</p>
+</div>
+
+<!-- Search and Filter Section -->
+<form class="filter-panel row g-3 mb-4" method="GET" action="/opportunities">
+
+    <div class="col-md-5">
+        <input
+            class="form-control"
+            type="text"
+            name="search"
+            value="<%= filters.search || '' %>"
+            placeholder="Search roles or companies"
+        >
+    </div>
+
+    <div class="col-md-5">
+        <select class="form-select" name="type">
+            <option value="">All Opportunity Types</option>
+
+            <%
+            const types = [
+                { value: 'internship', label: 'Internship' },
+                { value: 'job', label: 'Full-time' },
+                { value: 'part-time', label: 'Part-time' },
+                { value: 'graduate-trainee', label: 'Graduate Trainee' },
+                { value: 'contract', label: 'Contract' }
+            ];
+            %>
+
+            <% types.forEach(t => { %>
+                <option
+                    value="<%= t.value %>"
+                    <%= filters.type === t.value ? 'selected' : '' %>
+                >
+                    <%= t.label %>
+                </option>
+            <% }) %>
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">
+            Filter
+        </button>
+    </div>
+
+</form>
+
+<!-- Opportunity Cards -->
+<div class="row g-4">
+
+    <% opportunities.forEach(o => { %>
+
+        <div class="col-md-6 col-lg-4">
+            <%- include('../partials/opportunity-card', { o }) %>
+        </div>
+
+    <% }) %>
+
+</div>
+
+<!-- Empty State -->
+<% if (!opportunities.length) { %>
+
+    <div class="empty-state">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <h4>No Matching Opportunities</h4>
+        <p>Try a different search or remove a filter.</p>
+    </div>
+
+<% } %>
+
+<%- include('../partials/footer') %>

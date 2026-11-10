@@ -1,0 +1,126 @@
+
+<%- include('../partials/header') %>
+
+<div class="page-heading">
+    <span class="eyebrow">STUDENT DASHBOARD</span>
+    <h1>My Applications</h1>
+    <p>Review your submissions and follow their status.</p>
+</div>
+
+<div class="table-responsive detail-panel">
+
+    <table class="table align-middle">
+
+        <thead>
+            <tr>
+                <th>Opportunity</th>
+                <th>Company</th>
+                <th>Applied</th>
+                <th>Deadline</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <% if (applications.length > 0) { %>
+
+                <% applications.forEach(a => { %>
+
+                    <%
+                        const statusLabels = {
+                            pending: 'Pending',
+                            reviewed: 'Reviewed',
+                            shortlisted: 'Shortlisted',
+                            accepted: 'Accepted',
+                            rejected: 'Rejected',
+                            withdrawn: 'Withdrawn'
+                        };
+
+                        const displayStatus =
+                            statusLabels[a.status] || a.status;
+
+                        const appliedDate = a.applied_at
+                            ? new Date(a.applied_at).toLocaleDateString('en-GB')
+                            : 'Not available';
+
+                        const deadline = a.application_deadline
+                            ? String(a.application_deadline).slice(0, 10)
+                            : null;
+
+                        const formattedDeadline = deadline
+                            ? new Date(deadline + 'T00:00:00').toLocaleDateString('en-GB')
+                            : 'No deadline';
+                    %>
+
+                    <tr>
+
+                        <td>
+                            <strong><%= a.title %></strong>
+                        </td>
+
+                        <td>
+                            <%= a.company_name || 'Not specified' %>
+                        </td>
+
+                        <td>
+                            <%= appliedDate %>
+                        </td>
+
+                        <td>
+                            <%= formattedDeadline %>
+                        </td>
+
+                        <td>
+                            <span class="status-pill">
+                                <%= displayStatus %>
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <% if (['pending', 'reviewed'].includes(a.status)) { %>
+
+                                <form
+                                    method="POST"
+                                    action="/student/applications/<%= a.id %>/withdraw"
+                                    onsubmit="return confirm('Are you sure you want to withdraw this application?');"
+                                >
+                                    <button
+                                        type="submit"
+                                        class="btn btn-sm btn-outline-danger"
+                                    >
+                                        Withdraw
+                                    </button>
+                                </form>
+
+                            <% } else { %>
+
+                                <span class="text-muted small">-</span>
+
+                            <% } %>
+
+                        </td>
+
+                    </tr>
+
+                <% }) %>
+
+            <% } else { %>
+
+                <tr>
+                    <td colspan="6" class="text-center py-4">
+                        You haven't applied to any opportunities yet.
+                    </td>
+                </tr>
+
+            <% } %>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<%- include('../partials/footer') %>

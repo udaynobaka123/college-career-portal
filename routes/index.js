@@ -1,0 +1,7 @@
+const router=require('express').Router(),auth=require('../controllers/authController'),c=require('../controllers/opportunityController'),a=require('../controllers/applicationController'),admin=require('../controllers/adminController'),{ensureAuth,ensureRole}=require('../middleware/auth');
+router.get('/',c.home);router.get('/opportunities',c.list);router.get('/opportunities/:id',c.detail);
+router.get('/about',(req,res)=>res.render('public/about'));router.get('/contact',(req,res)=>res.render('public/contact'));router.post('/contact',c.contact);
+router.get('/register',auth.registerForm);router.post('/register',auth.register);router.get('/login',auth.loginForm);router.post('/login',auth.login);router.post('/logout',auth.logout);
+router.get('/student/dashboard',ensureRole('student'),a.dashboard);router.post('/opportunities/:id/apply',ensureRole('student'),a.apply);router.get('/student/applications',ensureRole('student'),a.list);router.post('/applications/:id/withdraw',ensureRole('student'),a.withdraw);router.post('/opportunities/:id/save',ensureRole('student'),a.save);
+router.get('/admin',ensureRole('admin'),admin.dashboard);router.get('/admin/opportunities/new',ensureRole('admin'),admin.newForm);router.post('/admin/opportunities',ensureRole('admin'),admin.create);router.get('/admin/applications',ensureRole('admin'),admin.applications);router.post('/admin/applications/:id/status',ensureRole('admin'),admin.status);
+module.exports=router;
