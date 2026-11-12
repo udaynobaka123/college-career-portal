@@ -130,3 +130,82 @@ exports.logout = (req, res) => {
     res.redirect("/");
   });
 };
+
+// Employer registration page
+exports.employerRegisterPage = (req, res) => {
+  res.render("auth/employer-register", {
+    title: "Create employer account",
+  });
+};
+
+// Register employer
+exports.employerRegister = async (req, res, next) => {
+  try {
+    const { full_name, company_name, email, password, phone, company_website } =
+      req.body;
+
+    // Check required fields
+    if (
+      !full_name?.trim() ||
+      !company_name?.trim() ||
+      !email?.trim() ||
+      !password
+    ) {
+      req.flash("error", "Please complete all required fields.");
+      return res.redirect("/auth/employer-register");
+    }
+
+    // Validate email
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(email.trim())) {
+      req.flash("error", "Please enter a valid email address.");
+      return res.redirect("/auth/employer-register");
+    }
+
+    // Validate password
+    if (password.length < 8) {
+      req.flash("error", "Password must contain at least 8 characters.");
+      return res.redirect("/auth/employer-register");
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    // Create employer account
+    await pool.query(
+      `INSERT INTO users (
+                full_name,
+                email,
+                password,
+                role,
+                phone,
+                company_name,
+                company_website
+            )
+            VALUES ($1, $2, $3, 'employer', $4, $5, $6)`,
+      [
+        full_name.trim(),
+        email.trim().toLowerCase(),
+        hashedPassword,
+        phone?.trim() || null,
+        company_name.trim(),
+        company_website?.trim() || null,
+      ],
+    );
+
+    req.flash(
+      "success",
+      "Employer account created successfully. Please sign in.",
+    );
+
+    res.redirect("/auth/login");
+  } catch (error) {
+    if (error.code === "23505") {
+      req.flash("error", "This email address is already registered.");
+      return res.redirect("/auth/employer-register");
+    }
+
+    next(error);
+  }
+};
