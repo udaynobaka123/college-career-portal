@@ -226,12 +226,11 @@ exports.saved = async (req, res, next) => {
 
     const result = await pool.query(
       `SELECT
-         o.*,
-         so.created_at AS saved_at
+         o.*
        FROM saved_opportunities so
        JOIN opportunities o ON o.id = so.opportunity_id
        WHERE so.student_id = $1
-       ORDER BY so.created_at DESC`,
+       ORDER BY o.created_at DESC`,
       [studentId],
     );
 
