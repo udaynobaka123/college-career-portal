@@ -44,13 +44,11 @@ exports.dashboard = async (req, res, next) => {
         ...student,
         name: student.name || student.full_name,
       },
-
       stats: {
         total: Number(applications.rows[0].total),
         submitted: Number(applications.rows[0].submitted),
         shortlisted: Number(applications.rows[0].shortlisted),
       },
-
       saved: Number(saved.rows[0].total),
       opportunityCount: Number(opportunities.rows[0].total),
     });
@@ -316,10 +314,14 @@ exports.profile = async (req, res, next) => {
       `SELECT
          id,
          full_name,
+         full_name AS name,
          email,
          student_id,
          department,
          phone,
+         NULL AS program,
+         NULL AS year_of_study,
+         NULL AS graduation_year,
          created_at
        FROM users
        WHERE id = $1
@@ -333,7 +335,7 @@ exports.profile = async (req, res, next) => {
     }
 
     res.render("student/profile", {
-      student: result.rows[0],
+      profile: result.rows[0],
     });
   } catch (error) {
     next(error);
@@ -348,7 +350,8 @@ exports.updateProfile = async (req, res, next) => {
   try {
     const studentId = req.session.user.id;
 
-    const fullName = String(req.body.full_name || "").trim();
+    const fullName = String(req.body.full_name || req.body.name || "").trim();
+
     const department = String(req.body.department || "").trim();
     const phone = String(req.body.phone || "").trim();
 
