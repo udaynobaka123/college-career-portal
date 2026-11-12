@@ -10,17 +10,22 @@ exports.dashboard = async (req, res, next) => {
 
     const [applications, saved, opportunities] = await Promise.all([
       pool.query(
-        `SELECT COUNT(*) AS total
+        `SELECT
+           COUNT(*) AS total,
+           COUNT(*) FILTER (WHERE status = 'pending') AS submitted,
+           COUNT(*) FILTER (WHERE status = 'shortlisted') AS shortlisted
          FROM applications
          WHERE student_id = $1`,
         [studentId],
       ),
+
       pool.query(
         `SELECT COUNT(*) AS total
          FROM saved_opportunities
          WHERE student_id = $1`,
         [studentId],
       ),
+
       pool.query(
         `SELECT COUNT(*) AS total
          FROM opportunities
@@ -32,9 +37,21 @@ exports.dashboard = async (req, res, next) => {
       ),
     ]);
 
+    const student = req.session.user;
+
     res.render("student/dashboard", {
-      applicationCount: Number(applications.rows[0].total),
-      savedCount: Number(saved.rows[0].total),
+      user: {
+        ...student,
+        name: student.name || student.full_name,
+      },
+
+      stats: {
+        total: Number(applications.rows[0].total),
+        submitted: Number(applications.rows[0].submitted),
+        shortlisted: Number(applications.rows[0].shortlisted),
+      },
+
+      saved: Number(saved.rows[0].total),
       opportunityCount: Number(opportunities.rows[0].total),
     });
   } catch (error) {
@@ -357,6 +374,7 @@ exports.updateProfile = async (req, res, next) => {
     );
 
     req.session.user.name = fullName;
+    req.session.user.full_name = fullName;
 
     req.flash("success", "Profile updated successfully.");
     res.redirect("/student/profile");
